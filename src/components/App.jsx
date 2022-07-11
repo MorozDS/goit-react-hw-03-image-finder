@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ApiPictures from './service/api';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
+import Button from './Button/Button';
 
 export default class App extends Component {
   state = {
@@ -10,8 +11,9 @@ export default class App extends Component {
     page: 1,
   };
 
+  bottomRef = React.createRef();
+
   componentDidUpdate(prevProps, prevState) {
-    console.log(this.state.pictures);
     if (
       prevState.searchQuery !== this.state.searchQuery ||
       prevState.page !== this.state.page
@@ -22,10 +24,18 @@ export default class App extends Component {
         }));
       });
     }
+
+    if (this.bottomRef.current && this.state.page > 1) {
+      this.bottomRef.current.scrollIntoView(false);
+    }
   }
 
   onSearchClick = searchvalue => {
     this.setState({ searchQuery: searchvalue });
+  };
+
+  LoadMore = () => {
+    this.setState(prevState => ({ page: prevState.page + 1 }));
   };
 
   render() {
@@ -33,6 +43,8 @@ export default class App extends Component {
       <div>
         <Searchbar onSearchClick={this.onSearchClick} />
         {this.state.pictures && <ImageGallery pictures={this.state.pictures} />}
+
+        <Button handleClick={this.LoadMore} text="Load More" />
       </div>
     );
   }
