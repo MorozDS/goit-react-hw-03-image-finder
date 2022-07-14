@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import ImageGalleryItem from '../ImageGalleryItem/ImageGalleryItem';
 import Modal from 'components/Modal/Modal';
+import s from './ImageGallery.module.css';
 
 export default class ImageGallery extends Component {
   state = {
@@ -30,7 +31,7 @@ export default class ImageGallery extends Component {
 
     return (
       <>
-        <ul class="gallery">
+        <ul className={s.ImageGallery}>
           {pictures.map(image => (
             <li key={image.id}>
               <ImageGalleryItem
