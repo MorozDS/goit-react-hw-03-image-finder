@@ -1,9 +1,14 @@
 import React, { Component } from 'react';
 import s from './Searchbar.module.css';
+import PropTypes from 'prop-types';
 
 export default class Searchbar extends Component {
   state = {
     searchvalue: '',
+  };
+
+  static propTypes = {
+    onSearchClick: PropTypes.func.isRequired,
   };
 
   onChange = e => {
@@ -28,7 +33,7 @@ export default class Searchbar extends Component {
             className={s.SearchForminput}
             type="text"
             autoComplete="off"
-            autofocus
+            autoFocus
             placeholder="Search images and photos"
             onChange={this.onChange}
             value={this.state.searchvalue}

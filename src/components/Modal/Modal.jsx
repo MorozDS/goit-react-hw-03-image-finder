@@ -1,7 +1,14 @@
 import React, { Component } from 'react';
 import s from './Modal.module.css';
+import PropTypes from 'prop-types';
 
 export default class Modal extends Component {
+  static propTypes = {
+    largeImageURL: PropTypes.string.isRequired,
+    tags: PropTypes.string.isRequired,
+    closeModal: PropTypes.func.isRequired,
+  };
+
   componentDidMount() {
     window.addEventListener('keydown', this.pushKeydown);
   }
