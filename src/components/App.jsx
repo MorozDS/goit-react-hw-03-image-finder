@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import ApiPictures from './service/api';
+import ApiPictures from '../service/api';
 import s from './App.module.css';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
@@ -18,6 +18,7 @@ export default class App extends Component {
     searchQuery: '',
     pictures: [],
     page: 1,
+    totalHits: null,
     status: Status.IDLE,
   };
 
@@ -29,11 +30,21 @@ export default class App extends Component {
       prevState.page !== this.state.page
     ) {
       this.setState({ status: Status.PENDING });
+
       ApiPictures(this.state.searchQuery, this.state.page).then(data => {
-        this.setState(prevState => ({
-          pictures: [...prevState.pictures, ...data.hits],
-          status: Status.RESOLVED,
-        }));
+        if (data.totalHits === 0) {
+          alert(`${this.state.searchQuery} not found!`);
+
+          this.setState({
+            status: Status.REJECTED,
+          });
+        } else {
+          this.setState(prevState => ({
+            pictures: [...prevState.pictures, ...data.hits],
+            status: Status.RESOLVED,
+            totalHits: data.totalHits,
+          }));
+        }
       });
     }
 
@@ -43,7 +54,9 @@ export default class App extends Component {
   }
 
   onSearchClick = searchvalue => {
-    this.setState({ searchQuery: searchvalue });
+    if (searchvalue.toLowerCase() === this.state.searchQuery.toLowerCase())
+      return;
+    this.setState({ searchQuery: searchvalue, pictures: [], page: 1 });
   };
 
   LoadMore = () => {
@@ -51,6 +64,7 @@ export default class App extends Component {
   };
 
   render() {
+    const totalPages = this.state.totalHits / 12;
     return (
       <>
         <div className={s.container}>
@@ -60,9 +74,10 @@ export default class App extends Component {
           )}
           {this.state.status === Status.PENDING && <Spiner />}
 
-          {this.state.status === Status.RESOLVED && (
-            <Button handleClick={this.LoadMore} text="Load More" />
-          )}
+          {this.state.status === Status.RESOLVED &&
+            totalPages > this.state.page && (
+              <Button handleClick={this.LoadMore} text="Load More" />
+            )}
           <div ref={this.bottomRef}></div>
         </div>
       </>
